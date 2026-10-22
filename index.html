@@ -89,7 +89,7 @@
 
         /* --- تصميم صفحة الخيارات الثلاثة --- */
         .menu-wrapper {
-            display: none; /* مخفي لحين إدخال كلمة السر */
+            display: none;
             flex-direction: column;
             align-items: center;
             gap: 15px;
@@ -136,7 +136,7 @@
 
         /* --- تصميم الموقع الأصلي (الظرف والرسالة) --- */
         .main-wrapper {
-            display: none; /* مخفي لحين اختيار الخيار الأول بعد استيفاء الشرط */
+            display: none;
             justify-content: center;
             align-items: center;
             width: 100%;
@@ -214,7 +214,6 @@
             overflow-y: auto;
         }
 
-        /* تخصيص شريط التمرير */
         .letter::-webkit-scrollbar {
             width: 5px;
         }
@@ -234,7 +233,6 @@
             letter-spacing: 0.2px;
         }
 
-        /* حركات فتح الظرف وخروج الورقة */
         .container.open .envelope-flap {
             transform: rotateX(180deg);
             z-index: 1;
@@ -261,6 +259,9 @@
 </head>
 <body>
 
+    <!-- مشغل الأغنية (ملف 1.m4a يجب أن يكون في نفس المجلد مع صفحة الـ HTML) -->
+    <audio id="loveSong" src="1.m4a" preload="auto"></audio>
+
     <!-- نافذة طلب كلمة السر -->
     <div class="password-overlay" id="passOverlay">
         <div class="password-box">
@@ -276,13 +277,8 @@
     <div class="menu-wrapper" id="menuWrapper">
         <div class="menu-title">اختاري حاجة من دول الأول ❤️</div>
         
-        <!-- الخيار الأول (الرسالة المشروطة) -->
         <div class="menu-btn" onclick="tryOpenLetter()">1. رسالة من محمد 💌</div>
-
-        <!-- الخيار الثاني (الاتصال) -->
         <a href="tel:01111185741" class="menu-btn" onclick="markChosen()">2. نتصل علي محمد نقوله بحبك يا حمودي 📞</a>
-
-        <!-- الخيار الثالث (الواتساب) -->
         <a href="https://wa.me/201111185741?text=%D8%A8%D8%AD%D8%A8%D9%83%20%D9%8A%D8%A7%20%D8%AD%D9%85%D9%88%D8%AF%D9%8A" target="_blank" class="menu-btn" onclick="markChosen()">3. نبعت لمحمد واتساب (بحبك يا حمودي) 💬</a>
 
         <div class="warning-msg" id="warningMsg">لازم تختار حاجه من الاتنين التانين الأول! ⚠️</div>
@@ -291,7 +287,6 @@
     <!-- محتوى الموقع الأساسي (الظرف والرسالة) -->
     <div class="main-wrapper" id="mainWrapper">
         <div class="container" id="envelopeContainer">
-            <!-- الورقة -->
             <div class="letter" onclick="event.stopPropagation();">
                 <p>
 السلام عليكم ورحمه الله وبركاته، ازيك يا مرنون؟ ازيك يا احلي حاجه حصلتلي الفتره الي فاتت ديه؟
@@ -307,7 +302,6 @@
 عايزك يا ميرنا مهما حصل متتغيريش وتفضلي زي مانتي علشان الي زيك بقوا قليلين.. وبس كدا، في نهايه رسالتي بتمني تحققي كل الي تتمنيه في حياتك وبدعي ربنا انه يحفظك ويوفقك ويوصلك لأحلامك واشوفك احسن دكتوره في الدنيا ❤️</p>
             </div>
 
-            <!-- أجزاء الظرف -->
             <div class="envelope"></div>
             <div class="envelope-front"></div>
             <div class="envelope-flap"></div>
@@ -317,7 +311,8 @@
     </div>
 
     <script>
-        let hasChosenOther = false; // متغير للتحقق مما إذا تم الضغط على أحد الخيارين الآخرين
+        let hasChosenOther = false;
+        const song = document.getElementById('loveSong');
 
         function checkPassword() {
             const inputVal = document.getElementById('passInput').value;
@@ -327,45 +322,38 @@
             const menuWrapper = document.getElementById('menuWrapper');
 
             if (inputVal === correctPass) {
-                // إخفاء نافذة كلمة السر وإظهار صفحة الخيارات
                 passOverlay.style.opacity = '0';
                 setTimeout(() => {
                     passOverlay.style.display = 'none';
                     menuWrapper.style.display = 'flex';
                 }, 500);
             } else {
-                // إظهار رسالة الخطأ
                 errorMsg.style.display = 'block';
                 document.getElementById('passInput').value = '';
             }
         }
 
-        // دعم الضغط على زر Enter من لوحة المفاتيح في خانة الباسورد
         document.getElementById('passInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 checkPassword();
             }
         });
 
-        // دالة يتم تفعيلها عند الضغط على الاتصال أو الواتساب
         function markChosen() {
             hasChosenOther = true;
             document.getElementById('warningMsg').style.display = 'none';
         }
 
-        // دالة محاولة فتح الرسالة (الخيار الأول)
         function tryOpenLetter() {
             if (!hasChosenOther) {
-                // لو مأختارش حاجة من الاتنين التانين، أظهر رسالة التحذير
                 document.getElementById('warningMsg').style.display = 'block';
             } else {
-                // لو اختار، اخفي القائمة وافتح صفحة الظرف والرسالة
                 document.getElementById('menuWrapper').style.display = 'none';
                 document.getElementById('mainWrapper').style.display = 'flex';
             }
         }
 
-        // تفاعل فتح الظرف
+        // تفاعل فتح الظرف وتشغيل الأغنية
         const container = document.getElementById('envelopeContainer');
         const hint = document.getElementById('hintText');
 
@@ -374,6 +362,10 @@
             
             if (container.classList.contains('open')) {
                 hint.style.display = 'none';
+                // تشغيل الأغنية فور فتح الظرف
+                song.play().catch(error => {
+                    console.log("تم حظر التشغيل التلقائي من المتصفح، سيتم التشغيل مع التفاعل");
+                });
             } else {
                 hint.style.display = 'block';
             }
