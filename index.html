@@ -87,9 +87,56 @@
             display: none;
         }
 
-        /* --- تصميم الموقع الأصلي (مخفي لحين إدخال كلمة السر) --- */
+        /* --- تصميم صفحة الخيارات الثلاثة --- */
+        .menu-wrapper {
+            display: none; /* مخفي لحين إدخال كلمة السر */
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            width: 320px;
+            text-align: center;
+        }
+
+        .menu-title {
+            color: #d81b60;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .menu-btn {
+            display: block;
+            width: 100%;
+            background: #fff;
+            color: #d81b60;
+            border: 2px solid #f06292;
+            padding: 12px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+            cursor: pointer;
+            box-sizing: border-box;
+        }
+
+        .menu-btn:hover {
+            background: #f06292;
+            color: #fff;
+        }
+
+        .warning-msg {
+            color: #d32f2f;
+            font-size: 13px;
+            font-weight: bold;
+            margin-top: 5px;
+            display: none;
+        }
+
+        /* --- تصميم الموقع الأصلي (الظرف والرسالة) --- */
         .main-wrapper {
-            display: none; /* مخفي في البداية */
+            display: none; /* مخفي لحين اختيار الخيار الأول بعد استيفاء الشرط */
             justify-content: center;
             align-items: center;
             width: 100%;
@@ -225,7 +272,23 @@
         </div>
     </div>
 
-    <!-- محتوى الموقع الأساسي (مخفي في البداية) -->
+    <!-- صفحة الخيارات الثلاثة -->
+    <div class="menu-wrapper" id="menuWrapper">
+        <div class="menu-title">اختاري حاجة من دول الأول ❤️</div>
+        
+        <!-- الخيار الأول (الرسالة المشروطة) -->
+        <div class="menu-btn" onclick="tryOpenLetter()">1. رسالة من محمد 💌</div>
+
+        <!-- الخيار الثاني (الاتصال) -->
+        <a href="tel:01111185741" class="menu-btn" onclick="markChosen()">2. نتصل علي محمد نقوله بحبك يا حمودي 📞</a>
+
+        <!-- الخيار الثالث (الواتساب) -->
+        <a href="https://wa.me/201111185741?text=%D8%A8%D8%AD%D8%A8%D9%83%20%D9%8A%D8%A7%20%D8%AD%D9%85%D9%88%D8%AF%D9%8A" target="_blank" class="menu-btn" onclick="markChosen()">3. نبعت لمحمد واتساب (بحبك يا حمودي) 💬</a>
+
+        <div class="warning-msg" id="warningMsg">لازم تختار حاجه من الاتنين التانين الأول! ⚠️</div>
+    </div>
+
+    <!-- محتوى الموقع الأساسي (الظرف والرسالة) -->
     <div class="main-wrapper" id="mainWrapper">
         <div class="container" id="envelopeContainer">
             <!-- الورقة -->
@@ -254,33 +317,53 @@
     </div>
 
     <script>
+        let hasChosenOther = false; // متغير للتحقق مما إذا تم الضغط على أحد الخيارين الآخرين
+
         function checkPassword() {
             const inputVal = document.getElementById('passInput').value;
-            const correctPass = "30609131501144";
+            const correctPass = "1392006";
             const errorMsg = document.getElementById('errorMsg');
             const passOverlay = document.getElementById('passOverlay');
-            const mainWrapper = document.getElementById('mainWrapper');
+            const menuWrapper = document.getElementById('menuWrapper');
 
             if (inputVal === correctPass) {
-                // إخفاء نافذة كلمة السر وإظهار الموقع
+                // إخفاء نافذة كلمة السر وإظهار صفحة الخيارات
                 passOverlay.style.opacity = '0';
                 setTimeout(() => {
                     passOverlay.style.display = 'none';
-                    mainWrapper.style.display = 'flex';
+                    menuWrapper.style.display = 'flex';
                 }, 500);
             } else {
                 // إظهار رسالة الخطأ
                 errorMsg.style.display = 'block';
-                document.getElementById('passInput').value = ''; // تفريغ الحقل
+                document.getElementById('passInput').value = '';
             }
         }
 
-        // دعم الضغط على زر Enter من لوحة المفاتيح
+        // دعم الضغط على زر Enter من لوحة المفاتيح في خانة الباسورد
         document.getElementById('passInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 checkPassword();
             }
         });
+
+        // دالة يتم تفعيلها عند الضغط على الاتصال أو الواتساب
+        function markChosen() {
+            hasChosenOther = true;
+            document.getElementById('warningMsg').style.display = 'none';
+        }
+
+        // دالة محاولة فتح الرسالة (الخيار الأول)
+        function tryOpenLetter() {
+            if (!hasChosenOther) {
+                // لو مأختارش حاجة من الاتنين التانين، أظهر رسالة التحذير
+                document.getElementById('warningMsg').style.display = 'block';
+            } else {
+                // لو اختار، اخفي القائمة وافتح صفحة الظرف والرسالة
+                document.getElementById('menuWrapper').style.display = 'none';
+                document.getElementById('mainWrapper').style.display = 'flex';
+            }
+        }
 
         // تفاعل فتح الظرف
         const container = document.getElementById('envelopeContainer');
@@ -299,4 +382,3 @@
 
 </body>
 </html>
-
